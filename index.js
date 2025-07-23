@@ -16,7 +16,7 @@ document.getElementById('search-btn').addEventListener('click', async () => {
 
 // get the search result
 async function getSearchResultArr(search) {
-    const res = await fetch(`http://www.omdbapi.com/?s=${search}&apikey=ab1918a1`)
+    const res = await fetch(`https://www.omdbapi.com/?s=${search}&apikey=ab1918a1`)
     const data = await res.json()
     return data.Search
 }
@@ -42,7 +42,7 @@ function getMovies(imdbIDs) {
 
 // get each movie with it's specific id
 async function getMovieById(id) {
-    const res = await fetch(`http://www.omdbapi.com/?i=${id}&apikey=ab1918a1`)
+    const res = await fetch(`https://www.omdbapi.com/?i=${id}&apikey=ab1918a1`)
     return await res.json()
 }
 
