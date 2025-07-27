@@ -125,10 +125,12 @@ main .container {
 
 .movies .no-data {
     text-align: center;
+    padding-top: 7em;
 }
 
 .movies .explor-icon {
     font-size: 5rem;
+    padding-top: 2em;
 }
 
 .movies .explor-txt,
