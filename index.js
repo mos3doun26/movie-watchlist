@@ -3,6 +3,18 @@ document.getElementById('search-btn').addEventListener('click', () => showResult
 // Click enter to search input show results
 document.getElementById('search-input').addEventListener('keypress', (e) => { if (e.code === 'Enter') { showResults() } })
 
+// handel read more button
+document.addEventListener('click', (e) => {
+    if (e.target.className === 'read-more-btn') {
+        const holder = e.target.parentElement
+        const desc = holder.querySelector('.description')
+        desc.classList.toggle('turncated')
+        const btnText = e.target.textContent === 'Read more' ? 'Read less' : 'Read more'
+        e.target.textContent = btnText
+    }
+})
+
+// show results or status of the search
 async function showResults() {
     const search = document.getElementById('search-input').value
     document.getElementById('search-input').value = ''
@@ -70,13 +82,33 @@ function getMoviesHtml(movies) {
                                 <span>Watchlist</span>
                             </div>
                         </div>
-                        <p class='description'>${movie.Plot}</p>
+                        <div class='description-holder'>
+                            <p class='description'>${movie.Plot}</p>
+                        </div>
                     </div>
                 </div>`
     }).join('')
 
 }
 
+// get the description html of the movie
+function getMovieDescription(description) {
+    const lineHeight = parseFloat(getComputedStyle(description).lineHeight);
+    const maxHeight = lineHeight * 3
+    const holderHeight = description.scrollHeight
+
+    // If expanded false will do nothing
+    if (holderHeight > maxHeight) {
+        description.classList.add('turncated')
+
+        description.parentElement.innerHTML += `<span class='dots'>...</span>
+                                                <button class='read-more-btn'>Read more</button>`
+    }
+
+
+}
+
 function renderMovies(html) {
     document.getElementById('movies').innerHTML = html
+    document.querySelectorAll('.description').forEach(description => getMovieDescription(description))
 }
