@@ -1,5 +1,9 @@
-// Search Event handler
-document.getElementById('search-btn').addEventListener('click', async () => {
+// Search Event handler for search button
+document.getElementById('search-btn').addEventListener('click', () => showResults())
+// Click enter to search input show results
+document.getElementById('search-input').addEventListener('keypress', (e) => { if (e.code === 'Enter') { showResults() } })
+
+async function showResults() {
     const search = document.getElementById('search-input').value
     document.getElementById('search-input').value = ''
     const searchResult = await getSearchResultArr(search)
@@ -11,8 +15,7 @@ document.getElementById('search-btn').addEventListener('click', async () => {
         document.getElementById('movies').innerHTML =
             `<p class='no-data'>Unable to find what you’re looking for.<br>Please try another search.</p>`
     }
-})
-
+}
 
 // get the search result
 async function getSearchResultArr(search) {
