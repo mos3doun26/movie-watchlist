@@ -1,9 +1,10 @@
 // Array of IDs of the watchlist movies
-export let watchlistMoviesImdbIDs = []
+export let watchlistMoviesImdbIDs
 
 // Locating some elements
 const searchBtn = document.getElementById('search-btn')
 const searchInput = document.getElementById('search-input')
+const mainMoviesSect = document.getElementById('movies')
 
 if (searchBtn && searchInput) {
     // Search Event handler for search button
@@ -20,16 +21,38 @@ document.addEventListener('click', (e) => {
         desc.classList.toggle('turncated')
         const btnText = e.target.textContent === 'Read more' ? 'Read less' : 'Read more'
         e.target.textContent = btnText
-    } else if (e.target.classList.contains('add-movie')) {
-        addMovieToWatchlist(e.target.dataset.target)
-        showResults()
-    } else if (e.target.classList.contains('remove-movie')) {
-        removeMovieToWatchlist(e.target.dataset.target)
-        showResults()
     }
 })
 
+if (mainMoviesSect) {
+    mainMoviesSect.addEventListener('click', (e) => {
+        if (e.target.classList.contains('add-movie')) {
+            addMovieToWatchlist(e.target.dataset.target)
+            showResults()
+            updateLocalWatchlist()
+        } else if (e.target.classList.contains('remove-movie')) {
+            removeMovieFromWatchlist(e.target.dataset.target)
+            showResults()
+            updateLocalWatchlist()
+        }
+    })
+}
 
+document.addEventListener('DOMContentLoaded', () => { watchlistMoviesImdbIDs = handelLocalWatchlist() })
+
+export function handelLocalWatchlist() {
+    const watchlistLocal = JSON.parse(localStorage.getItem('watchlist'))
+    if (watchlistLocal) {
+        return watchlistLocal
+    } else {
+        localStorage.setItem('watchlist', JSON.stringify([]))
+        return []
+    }
+}
+
+export function updateLocalWatchlist() {
+    localStorage.setItem('watchlist', JSON.stringify(watchlistMoviesImdbIDs))
+}
 
 // show results or status of the search
 async function showResults() {
@@ -123,7 +146,7 @@ function addMovieToWatchlist(movieImdbID) {
 }
 
 // remove movie from watchlist
-function removeMovieToWatchlist(movieImdbID) {
+export function removeMovieFromWatchlist(movieImdbID) {
     if (watchlistMoviesImdbIDs.includes(movieImdbID)) {
         // remove the movie from the watchlist
         watchlistMoviesImdbIDs = watchlistMoviesImdbIDs.filter(movieId => movieId !== movieImdbID)
@@ -131,7 +154,7 @@ function removeMovieToWatchlist(movieImdbID) {
 }
 
 // get the description html of the movie
-function getMovieDescription(description) {
+export function getMovieDescription(description) {
     const lineHeight = parseFloat(getComputedStyle(description).lineHeight);
     const maxHeight = lineHeight * 3
     const holderHeight = description.scrollHeight
@@ -143,7 +166,6 @@ function getMovieDescription(description) {
         description.parentElement.innerHTML += `<span class='dots'>...</span>
                                                 <button class='read-more-btn'>Read more</button>`
     }
-
 
 }
 

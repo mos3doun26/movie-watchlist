@@ -1,6 +1,15 @@
-import { getMovies, getMoviesHtml, watchlistMoviesImdbIDs } from './index.js'
+import { getMovies, getMoviesHtml, watchlistMoviesImdbIDs, getMovieDescription, removeMovieFromWatchlist, updateLocalWatchlist } from './index.js'
 
-document.addEventListener('DOMContentLoaded', renderWatchlistMovies())
+document.addEventListener('DOMContentLoaded', async () => renderWatchlistMovies())
+
+document.getElementById('watchlist-movies').addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove-movie')) {
+        removeMovieFromWatchlist(e.target.dataset.target)
+        updateLocalWatchlist()
+        renderWatchlistMovies()
+    }
+})
+
 
 // render watchlist html
 async function renderWatchlistMovies() {
