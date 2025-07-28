@@ -1,18 +1,31 @@
-// Search Event handler for search button
-document.getElementById('search-btn').addEventListener('click', () => showResults())
-// Click enter to search input show results
-document.getElementById('search-input').addEventListener('keypress', (e) => { if (e.code === 'Enter') { showResults() } })
+// Array of IDs of the watchlist movies
+export let watchlistMoviesImdbIDs = []
 
-// handel read more button
+// Locating some elements
+const searchBtn = document.getElementById('search-btn')
+const searchInput = document.getElementById('search-input')
+
+if (searchBtn && searchInput) {
+    // Search Event handler for search button
+    searchBtn.addEventListener('click', () => showResults())
+    // Click enter to search input show results
+    searchInput.addEventListener('keypress', (e) => { if (e.code === 'Enter') { showResults() } })
+}
+
 document.addEventListener('click', (e) => {
+    // handel read more button
     if (e.target.className === 'read-more-btn') {
         const holder = e.target.parentElement
         const desc = holder.querySelector('.description')
         desc.classList.toggle('turncated')
         const btnText = e.target.textContent === 'Read more' ? 'Read less' : 'Read more'
         e.target.textContent = btnText
+    } else if (e.target.classList.contains('add-movie')) {
+        addMovieToWatchlist(e.target.dataset.target)
     }
 })
+
+
 
 // show results or status of the search
 async function showResults() {
@@ -42,7 +55,7 @@ function getImdbIDs(searchArr) {
 }
 
 // get all movies using imdbIds
-function getMovies(imdbIDs) {
+export function getMovies(imdbIDs) {
     // this method return an array of unsolved promises
     // const movies = []
     // imdbIDs.forEach(async (id) => {
@@ -61,7 +74,7 @@ async function getMovieById(id) {
     return await res.json()
 }
 
-function getMoviesHtml(movies) {
+export function getMoviesHtml(movies) {
 
     return movies.map(movie => {
         return `<div class="movie">
@@ -78,7 +91,7 @@ function getMoviesHtml(movies) {
                             <span class="time">${movie.Runtime}</span>
                             <span class="type">${movie.Type}</span>
                             <div class="add-to-watchlis">
-                                <i class="fa-solid fa-circle-plus"></i>
+                                ${isInWatchlist(movie.imdbID)}
                                 <span>Watchlist</span>
                             </div>
                         </div>
@@ -89,6 +102,21 @@ function getMoviesHtml(movies) {
                 </div>`
     }).join('')
 
+}
+
+// check if movie in watchlist movies
+function isInWatchlist(movieImdbID) {
+    if (watchlistMoviesImdbIDs.includes(movieImdbID)) {
+        return `<i class="fa-solid fa-circle-minus remove-movie" data-target='${movieImdbID}'></i>`
+    }
+    return `<i class="fa-solid fa-circle-plus add-movie" data-target='${movieImdbID}'></i>`
+}
+
+// add movie to watchlist
+function addMovieToWatchlist(movieImdbID) {
+    if (!watchlistMoviesImdbIDs.includes(movieImdbID)) {
+        watchlistMoviesImdbIDs.unshift(movieImdbID)
+    }
 }
 
 // get the description html of the movie
