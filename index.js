@@ -22,6 +22,10 @@ document.addEventListener('click', (e) => {
         e.target.textContent = btnText
     } else if (e.target.classList.contains('add-movie')) {
         addMovieToWatchlist(e.target.dataset.target)
+        showResults()
+    } else if (e.target.classList.contains('remove-movie')) {
+        removeMovieToWatchlist(e.target.dataset.target)
+        showResults()
     }
 })
 
@@ -30,7 +34,6 @@ document.addEventListener('click', (e) => {
 // show results or status of the search
 async function showResults() {
     const search = document.getElementById('search-input').value
-    document.getElementById('search-input').value = ''
     const searchResult = await getSearchResultArr(search)
     if (searchResult) {
         const imdbIDs = await getImdbIDs(searchResult)
@@ -116,6 +119,14 @@ function isInWatchlist(movieImdbID) {
 function addMovieToWatchlist(movieImdbID) {
     if (!watchlistMoviesImdbIDs.includes(movieImdbID)) {
         watchlistMoviesImdbIDs.unshift(movieImdbID)
+    }
+}
+
+// remove movie from watchlist
+function removeMovieToWatchlist(movieImdbID) {
+    if (watchlistMoviesImdbIDs.includes(movieImdbID)) {
+        // remove the movie from the watchlist
+        watchlistMoviesImdbIDs = watchlistMoviesImdbIDs.filter(movieId => movieId !== movieImdbID)
     }
 }
 
