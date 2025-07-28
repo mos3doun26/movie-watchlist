@@ -118,12 +118,14 @@ main .container {
 
 .movies .explor-icon,
 .movies .explor-txt,
-.movies .no-data {
+.movies .no-data,
+.empty-watchlist {
     color: #DFDDDD;
     font-weight: 700;
 }
 
-.movies .no-data {
+.movies .no-data,
+.empty-watchlist {
     text-align: center;
     padding-top: 7em;
 }
@@ -134,7 +136,8 @@ main .container {
 }
 
 .movies .explor-txt,
-.movies .no-data {
+.movies .no-data,
+.empty-watchlist {
     font-size: 1.5rem;
 }
 
@@ -201,6 +204,28 @@ main .container {
     cursor: pointer;
     font-weight: 600;
     line-height: 1.2rem;
+}
+
+/* watchlist page */
+.search-more {
+    display: flex;
+    align-items: center;
+    gap: .75em;
+    padding: 1em;
+}
+
+.search-more a {
+    text-decoration: none;
+    color: #363636;
+}
+
+.search-more-icon {
+    font-size: 1.5rem;
+}
+
+.search-more-txt {
+    font-size: 1.125rem;
+    font-weight: 700;
 }
 
 /* media queries */
