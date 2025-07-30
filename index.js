@@ -70,9 +70,16 @@ async function showResults() {
 
 // get the search result
 async function getSearchResultArr(search) {
-    const res = await fetch(`https://www.omdbapi.com/?s=${search}&apikey=ab1918a1`)
-    const data = await res.json()
-    return data.Search
+    try {
+        const res = await fetch(`https://www.omdbapi.com/?s=${search}&apikey=ab1918a1`)
+        if (!res.ok) {
+            throw Error('Not found')
+        }
+        const data = await res.json()
+        return data.Search
+    } catch (e) {
+        console.log(e)
+    }
 }
 
 // get the imbdIds from the search result
@@ -96,36 +103,67 @@ export function getMovies(imdbIDs) {
 
 // get each movie with it's specific id
 async function getMovieById(id) {
-    const res = await fetch(`https://www.omdbapi.com/?i=${id}&apikey=ab1918a1`)
-    return await res.json()
+    try {
+        const res = await fetch(`https://www.omdbapi.com/?i=${id}&apikey=ab1918a1`)
+
+        if (!res.ok) {
+            throw Error('Not found')
+        }
+        const data = await res.json()
+        const parameters = [data.Poster, data.Title, data.imdbRating, data.Runtime, data.Plot]
+        // Check for 'N/A' in required fields
+        if (parameters.includes('N/A')) {
+            return false
+        }
+        if (data.Poster && data.Poster !== 'N/A') {
+            const imageExists = await new Promise(resolve => {
+                const img = new window.Image()
+                img.onload = () => resolve(true)
+                img.onerror = () => resolve(false)
+                img.src = data.Poster
+            })
+
+            if (!imageExists) {
+                return false
+            }
+
+        }
+        return data
+
+    } catch (e) {
+        // console.error(e)
+        return false
+    }
 }
 
 export function getMoviesHtml(movies) {
 
     return movies.map(movie => {
-        return `<div class="movie">
-                    <img src="${movie.Poster}">
-                    <div class="movie-details">
-                        <div class="name-rate">
-                            <h2 class="movie-name">${movie.Title}</h2>
-                            <div class="rate-holder">
-                                <i class="fa-solid fa-star"></i>
-                                <span class="rate">${movie.imdbRating}</span>
+        if (movie) {
+            return `<div class="movie">
+                        <img src="${movie.Poster}">
+                        <div class="movie-details">
+                            <div class="name-rate">
+                                <h2 class="movie-name">${movie.Title}</h2>
+                                <div class="rate-holder">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span class="rate">${movie.imdbRating}</span>
+                                </div>
+                            </div>
+                            <div class="movie-info">
+                                <span class="time">${movie.Runtime}</span>
+                                <span class="type">${movie.Type}</span>
+                                <div class="add-to-watchlis">
+                                    ${isInWatchlist(movie.imdbID)}
+                                    <span>Watchlist</span>
+                                </div>
+                            </div>
+                            <div class='description-holder'>
+                                <p class='description'>${movie.Plot}</p>
                             </div>
                         </div>
-                        <div class="movie-info">
-                            <span class="time">${movie.Runtime}</span>
-                            <span class="type">${movie.Type}</span>
-                            <div class="add-to-watchlis">
-                                ${isInWatchlist(movie.imdbID)}
-                                <span>Watchlist</span>
-                            </div>
-                        </div>
-                        <div class='description-holder'>
-                            <p class='description'>${movie.Plot}</p>
-                        </div>
-                    </div>
-                </div>`
+                    </div>`
+        }
     }).join('')
 
 }
